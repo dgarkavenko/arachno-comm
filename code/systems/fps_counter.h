@@ -4,6 +4,7 @@
 
 class FPSCounter : public BaseSystem{
 public:
+    FPSCounter(GameDataRef data) : BaseSystem::BaseSystem(data){};
     void update(float dt) override;
 protected:
     void on_init() override;

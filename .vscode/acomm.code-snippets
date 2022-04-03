@@ -25,8 +25,8 @@
 
 
 		"System": {
-			"prefix": ["new_system"],
-			"body": ["#pragma once\n#include \"base_system.h\"\n\nclass ${1:name} : public BaseSystem{\npublic:\n    void on_init() override;\nprotected:\n    void update(float dt) override;\n};"],
+			"prefix": [".system"],
+			"body": ["#pragma once\n#include \"base_system.h\"\n\nclass ${1:name} : public BaseSystem{\npublic:\n    ${1:name}(GameDataRef data) : BaseSystem::BaseSystem(data){};\n    void update(float dt) override;\nprotected:\n    void on_init() override;\n};"],
 			"description": "system template."
 		  }
 	  

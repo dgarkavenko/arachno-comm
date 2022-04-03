@@ -5,13 +5,17 @@
 #include <entt/entt.hpp>
 #include "draw_system.h"
 #include "fps_counter.h"
+#include "observer_system.h"
+
 #include "game_data.h"
 
 class Game{
-    GameDataRef _data;
+    
     sf::Clock _clock;
-    DrawSystem _draw;
-    FPSCounter _fps;
+    GameDataRef _data;
+    DrawSystem *draw;
+    FPSCounter *fps;
+    ObserverSystem *test_observer;
 
 public:
     Game(int w, int h, std::string title);

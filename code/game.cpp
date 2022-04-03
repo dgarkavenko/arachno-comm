@@ -6,12 +6,9 @@
 #include <iostream>
 #include <SFML/System/Angle.hpp>
 #include "fps_counter.h"
-#include "observer_system.h"
 
 
 sf::Font font;
-ObserverSystem _os;
-
 
 void sf_text_construct(entt::registry &registry, entt::entity entity){
     sf::Text &text = registry.get<sf::Text>(entity);
@@ -25,9 +22,9 @@ Game::Game(int w, int h, std::string title) {
     _data->window.create(sf::VideoMode(w,h), title);
     _data->window.setFramerateLimit(60);
     
-    _draw.init(_data);
-    _fps.init(_data);
-    _os.init(_data);
+    draw = new DrawSystem(_data);
+    fps = new FPSCounter(_data);
+    test_observer = new ObserverSystem(_data);
 
     bool loaded = font.loadFromFile("../assets/PT_Sans/PTSans-Regular.ttf");
 
@@ -62,9 +59,9 @@ Game::Game(int w, int h, std::string title) {
 }
 
 void Game::update_systems(float dt){
-    _draw.update(dt);
-    _fps.update(dt);
-    _os.update(dt);
+    draw->update(dt);
+    fps->update(dt);
+    test_observer->update(dt);
 
     auto view = _data->registry.view<sf::Text>();
     for (auto entity : view)

@@ -23,6 +23,6 @@ void ObserverSystem::update(float dt)
 
 void ObserverSystem::on_init()
 {
-    //observer.connect(_data->registry, entt::collector.update<PickleComponent>());
+    observer.connect(_data->registry, entt::collector.update<PickleComponent>());
     //observer = entt::observer{_data->registry, entt::collector.update<PickleComponent>()};
 }

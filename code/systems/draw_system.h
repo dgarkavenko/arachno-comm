@@ -4,5 +4,6 @@
 
 class DrawSystem : public BaseSystem{
 public:
+    DrawSystem(GameDataRef data) : BaseSystem::BaseSystem(data){};
     void update(float dt) override;
 };
