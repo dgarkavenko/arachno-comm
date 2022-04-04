@@ -6,5 +6,4 @@ void BaseSystem::update(float dt) {
 }
 
 void BaseSystem::on_init() {
-    
 }

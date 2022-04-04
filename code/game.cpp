@@ -6,16 +6,10 @@
 #include <iostream>
 #include <SFML/System/Angle.hpp>
 #include "fps_counter.h"
-
+#include "texture_loader_system.h"
+#include "card_template.h"
 
 sf::Font font;
-
-void sf_text_construct(entt::registry &registry, entt::entity entity){
-    sf::Text &text = registry.get<sf::Text>(entity);
-    text.setFont(font);
-    text.setCharacterSize(18);
-    text.setFillColor(sf::Color::Red);
-}
 
 Game::Game(int w, int h, std::string title) {
     _data = std::make_shared<GameData>();
@@ -26,33 +20,14 @@ Game::Game(int w, int h, std::string title) {
     fps = new FPSCounter(_data);
     test_observer = new ObserverSystem(_data);
 
-    bool loaded = font.loadFromFile("../assets/PT_Sans/PTSans-Regular.ttf");
+    new TextureLoader(_data);
 
     entt::registry & reg = _data->registry;
-    auto entity = reg.create();
-    reg.on_construct<sf::Text>().connect<&sf_text_construct>();
-
-    reg.emplace<FPSCounterComponent>(entity);
-
-    const int numbers[10] = {1,2,3,4,5,6,7,8,9,10};
-    for (auto element : numbers)
-        reg.emplace<PickleComponent>(reg.create(), element * 100);
-    
-    sf::Texture texture;
-    if (!texture.loadFromFile("../assets/images/card_back.png"))
-        return;
-
-    texture.setSmooth(false);
 
     for (size_t i = 0; i < 7; i++)
     {
         auto card = reg.create();
-        auto& sprite = reg.emplace<sf::Sprite>(card);
-        sprite.setTexture(texture);
-        sprite.setScale({0.15f, 0.15f});
-        sprite.setRotation(sf::degrees(0));
-        sf::FloatRect bounds = sprite.getLocalBounds();
-        sprite.setPosition({bounds.width * i * sprite.getScale().x, 20});
+        reg.emplace<CardTemplateComponent>(card, "../assets/images/card_back.png", sf::Vector2f(0.2f,0.2f));
     };
 
     run();
@@ -64,8 +39,11 @@ void Game::update_systems(float dt){
     test_observer->update(dt);
 
     auto view = _data->registry.view<sf::Text>();
-    for (auto entity : view)
-        _data->window.draw(view.get<sf::Text>(entity));
+    for (entt::entity entity : view){
+
+        sf::Text &text = view.get<sf::Text>(entity);
+        _data->window.draw(text);
+    }
 }
 
 void Game::run() {

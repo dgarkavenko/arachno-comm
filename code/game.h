@@ -16,6 +16,7 @@ class Game{
     DrawSystem *draw;
     FPSCounter *fps;
     ObserverSystem *test_observer;
+    //Board board;
 
 public:
     Game(int w, int h, std::string title);
