@@ -1,7 +1,8 @@
 #include "game.h"
+#include "game_data.h"
 
 int main()
 {
-    Game {800, 600, "purgatory"}.run();
+    Game {RENDER_WIDTH, RENDER_HEIGHT, "purgatory"}.loop();
     return 0;
 }

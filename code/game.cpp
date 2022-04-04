@@ -1,15 +1,17 @@
 #include "game.h"
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Main.hpp>
-#include <fmt/core.h>
-#include <iostream>
-#include <SFML/System/Angle.hpp>
-#include "fps_counter.h"
-#include "texture_loader_system.h"
-#include "card_template.h"
 
-sf::Font font;
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include "hand_system.h"
+
+#define CB(name) void (Game:: *name)(float dt)
+typedef CB(update_f);
+
+
+update_f systems_update;
+static bool Running = true;
+
+HandSystem *hand;
 
 Game::Game(int w, int h, std::string title) {
     _data = std::make_shared<GameData>();
@@ -18,25 +20,28 @@ Game::Game(int w, int h, std::string title) {
     
     draw = new DrawSystem(_data);
     fps = new FPSCounter(_data);
-    test_observer = new ObserverSystem(_data);
+
+    hand = new HandSystem(_data);
 
     new TextureLoader(_data);
 
-    entt::registry & reg = _data->registry;
+    entt::registry &reg = _data->registry;
 
-    for (size_t i = 0; i < 7; i++)
+    for (size_t i = 0; i < 8; i++)
     {
         auto card = reg.create();
         reg.emplace<CardTemplateComponent>(card, "../assets/images/card_back.png", sf::Vector2f(0.2f,0.2f));
     };
 
-    run();
+    systems_update = &Game::update_systems;
+    loop();
+    
 }
 
 void Game::update_systems(float dt){
     draw->update(dt);
     fps->update(dt);
-    test_observer->update(dt);
+    hand->update(dt);
 
     auto view = _data->registry.view<sf::Text>();
     for (entt::entity entity : view){
@@ -46,7 +51,7 @@ void Game::update_systems(float dt){
     }
 }
 
-void Game::run() {
+void Game::loop() {
 
     sf::RenderWindow &window = _data->window;
     while (window.isOpen())
@@ -59,7 +64,7 @@ void Game::run() {
                 window.close();
         
         window.clear();       
-        update_systems(dt);
+        std::invoke(systems_update, this, dt);
         window.display();
         std::cout.flush();
     }

@@ -10,7 +10,7 @@
 
 class ObserverSystem : public BaseSystem{
 public:
-    ObserverSystem(GameDataRef data) : BaseSystem::BaseSystem(data){};
+    ObserverSystem(GameDataRef data) : BaseSystem::BaseSystem(data){on_init();};
     entt::observer observer;
     void update(float dt) override;
 protected:

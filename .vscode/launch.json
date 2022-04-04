@@ -15,7 +15,7 @@
             "environment": [],
             "externalConsole": true,
             "MIMode": "lldb",
-            "preLaunchTask": "Start Build",
+            //"preLaunchTask": "Start Build",
             "targetArchitecture": "arm64"
         }
     ]
