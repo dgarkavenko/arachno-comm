@@ -5,16 +5,18 @@
 
 
 static float overlap = .4f;
-static float radius = 200;
-static float vertical_offset = 50;
+static float radius = 180;
+static float vertical_offset = 500;
 static float length = 2.f;
 static float rotation_pivot = 1200;
+static float flatten = 2.f;
 //https://www.desmos.com/calculator/d1upvx1kjj?lang=ru
 
 float get_arc_y(float x)
 {
     x = (x - RENDER_WIDTH / 2.f) / length;
-    return -(sqrt(radius * radius - x * x) - RENDER_HEIGHT) + vertical_offset;
+    float y = -(sqrt(radius * radius - x * x) - RENDER_HEIGHT) + vertical_offset;
+    return y / flatten;
 }
 
 sf::Angle get_arc_rotation(const sf::Vector2f& target){
@@ -55,10 +57,14 @@ void HandSystem::set_in_hand_positions() {
         const float card_visible_size = (1 - overlap) * size.x;
         const float start_x = RENDER_WIDTH / 2.f - card_visible_size * ((size_hint - 1) / 2.f);
         float x = start_x + i * card_visible_size;
-        sprite.setPosition({x, get_arc_y(x)});
-        sf::Angle rotation = get_arc_rotation(sprite.getPosition()) +  sf::degrees(90);
-        sprite.setRotation(rotation);
 
+        TweenComponent& tween =
+            _data->registry.emplace_or_replace<TweenComponent>(entity);
+
+        tween.duration = 3;
+        tween.time = 0;
+        tween.target = {x, get_arc_y(x)};
+        tween.rotation = get_arc_rotation(sprite.getPosition()) +  sf::degrees(90);
         i++;
     };
 }

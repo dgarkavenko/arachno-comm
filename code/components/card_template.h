@@ -11,3 +11,11 @@ struct CardTemplateComponent{
 struct InHand{
     //short order;
 };
+
+struct TweenComponent{
+    sf::Vector2f target {0,0};
+    sf::Angle rotation;
+    float duration = 1;
+    float time = 0;
+    float delay = 0;
+};

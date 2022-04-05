@@ -4,20 +4,26 @@
 #include <SFML/Main.hpp>
 #include <fmt/core.h>
 
+bool font_loaded;
+sf::Font* font;
 
-void fps_counter_consturct(entt::registry &registry, entt::entity entity)
+void text_init(entt::registry &registry, entt::entity entity)
 {
-    sf::Font* font = new sf::Font;
 
-    bool loaded = font->loadFromFile("../assets/PT_Sans/PTSans-Regular.ttf");
-    if(!loaded)
-        fmt::print("Font not found");
+    if(!font){
+        font = new sf::Font();
+        font->loadFromFile("../assets/PT_Sans/PTSans-Regular.ttf");
+    }
 
-    sf::Text &text = registry.emplace<sf::Text>(entity);
+    sf::Text &text = registry.get<sf::Text>(entity);
     text.setFont(*font);
     text.setCharacterSize(18);
     text.setFillColor(sf::Color::Red);
+}
+
+void fps_counter_consturct(entt::registry &registry, entt::entity entity){
     registry.on_construct<FPSCounterComponent>().disconnect<&fps_counter_consturct>();
+
 }
 
 void FPSCounter::update(float dt)
@@ -42,5 +48,7 @@ void FPSCounter::update(float dt)
 void FPSCounter::on_init()
 {
     _data->registry.on_construct<FPSCounterComponent>().connect<&fps_counter_consturct>();
+    _data->registry.on_construct<sf::Text>().connect<&text_init>();
+
     _data->registry.emplace<FPSCounterComponent>(_data->registry.create());
 }

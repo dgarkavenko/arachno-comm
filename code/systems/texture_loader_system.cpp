@@ -17,8 +17,6 @@ void TextureLoader::on_template_consturct(entt::registry &registry, entt::entity
     sprite.setScale(cardTemplate.scale);
     const auto& bounds = sprite.getLocalBounds();
     sprite.setOrigin({bounds.width / 2.0f, bounds.height / 2.0f});
-
-
     registry.emplace<InHand>(entity);
 }
 
