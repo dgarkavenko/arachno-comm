@@ -1,6 +1,5 @@
 #pragma once
 #include "base_system.h"
-#include "card_template.h"
 
 class HandSystem : public BaseSystem{
 public:

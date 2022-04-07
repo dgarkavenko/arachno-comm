@@ -1,9 +1,10 @@
 #pragma once
 #include <entt/entt.hpp>
 #include <SFML/Graphics.hpp>
+#include <fmt/core.h>
 
-#define RENDER_WIDTH 800
-#define RENDER_HEIGHT 600
+#define RENDER_WIDTH 1024
+#define RENDER_HEIGHT 768
 
 struct GameData{
     sf::RenderWindow window;

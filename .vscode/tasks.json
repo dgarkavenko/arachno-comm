@@ -14,6 +14,8 @@
                 "${workspaceFolder}/code/components",
                 "-I",
                 "${workspaceFolder}/code/systems",
+                "-I",
+                "${workspaceFolder}/code/utility",
                 "-L",
                 "/usr/local/lib",
                 "-lsfml-system",
@@ -26,6 +28,8 @@
                 "${workspaceFolder}/code/*.cpp",
                 //"${workspaceFolder}/code/components/*.cpp",
                 "${workspaceFolder}/code/systems/*.cpp",
+                "${workspaceFolder}/code/utility/*.cpp",
+
                 //"${fileDirname}\\**.h",
                 "-o",
                 "${workspaceFolder}/bin/run",

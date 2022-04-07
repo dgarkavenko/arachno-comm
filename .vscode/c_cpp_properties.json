@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/code/systems/**",
+                "${workspaceFolder}/code/utility/**",
                 "/Users/DG/cppurgatory/SFML_repo/lib",
                 "/usr/local/include"
             ],

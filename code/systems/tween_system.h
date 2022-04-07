@@ -7,7 +7,6 @@ public:
     void update(float dt) override;
 protected:
     void on_init() override;
-    void on_tween_consturct(entt::registry &registry, entt::entity entity);
 
 };
 

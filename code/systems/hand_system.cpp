@@ -2,6 +2,8 @@
 #include <fmt/core.h>
 #include <SFML/Graphics.hpp>
 #include <math.h>
+#include "blanks.h"
+#include "components.h"
 
 
 static float overlap = .4f;
@@ -35,7 +37,7 @@ void HandSystem::update(float dt) {
 }
 
 void HandSystem::on_init() {
-    observer.connect(_data->registry, entt::collector.group<InHand, CardTemplateComponent>());
+    observer.connect(_data->registry, entt::collector.group<InHand, blanks::Sprite>());
 }
 
 sf::Vector2f real_size(const sf::Sprite& sprite){
