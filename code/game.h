@@ -5,10 +5,9 @@
 #include <entt/entt.hpp>
 #include "fps_counter.h"
 #include "observer_system.h"
+#include "components.h"
 
-
-#include "texture_loader_system.h"
-#include "font_system.h"
+#include "craftsman_system.h"
 #include "debug_system.h"
 
 #include "hand_system.h"

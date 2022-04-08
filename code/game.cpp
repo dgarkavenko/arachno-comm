@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
+#include "drag_system.h"
 
 #define CB(name) void (Game:: *name)(float dt)
 typedef CB(update_f);
@@ -13,6 +13,7 @@ static bool Running = true;
 HandSystem *hand;
 TweenSystem *tween;
 Debuger *debuger;
+DragSystem *drag;
 
 float GAME_TIME = 0;
 
@@ -22,13 +23,13 @@ Game::Game(int w, int h, std::string title) {
     _data->window.create(sf::VideoMode(w,h), title);
     _data->window.setFramerateLimit(60);
 
-    new TextureLoader(_data);
-    new FontSystem(_data);
+    new CraftsmanSystem(_data);
     
     fps = new FPSCounter(_data);
     hand = new HandSystem(_data);
     tween = new TweenSystem(_data);
     debuger = new Debuger(_data);
+    drag = new DragSystem(_data);
 
     systems_update = &Game::update_systems;
     loop();
@@ -43,6 +44,8 @@ void Game::update_systems(float dt){
 
     fps->update(dt);
     hand->update(dt);
+    drag->update(dt);
+
     tween->update(dt);
     debuger->update();
 
@@ -65,6 +68,7 @@ void Game::update_systems(float dt){
         next_spawn = GAME_TIME + 1.0f;
         auto card = _data->registry.create();
         _data->registry.emplace<blanks::Sprite>(card, "../assets/images/card_back.png", sf::Vector2f(0.2f, 0.2f));
+        //_data->registry.emplace<tag::InHand>(card);
     }
 
     debuger->update();

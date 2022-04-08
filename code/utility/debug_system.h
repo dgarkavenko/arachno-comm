@@ -1,6 +1,6 @@
 #pragma once
 #include "game_data.h"
-#include "blanks.h"
+#include "components.h"
 
 
 static std::string debug_text(sf::Sprite &sprite){

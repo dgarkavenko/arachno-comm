@@ -3,7 +3,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Main.hpp>
 #include <fmt/core.h>
-#include "blanks.h"
+#include "components.h"
 
 void FPSCounter::update(float dt)
 {

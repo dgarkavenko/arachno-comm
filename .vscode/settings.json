@@ -76,6 +76,8 @@
         "list": "cpp",
         "map": "cpp",
         "set": "cpp",
-        "__availability": "cpp"
+        "__availability": "cpp",
+        "numeric": "cpp",
+        "random": "cpp"
     }
 }

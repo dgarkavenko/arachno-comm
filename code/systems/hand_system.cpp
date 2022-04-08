@@ -2,7 +2,6 @@
 #include <fmt/core.h>
 #include <SFML/Graphics.hpp>
 #include <math.h>
-#include "blanks.h"
 #include "components.h"
 
 
@@ -37,7 +36,7 @@ void HandSystem::update(float dt) {
 }
 
 void HandSystem::on_init() {
-    observer.connect(_data->registry, entt::collector.group<InHand, blanks::Sprite>());
+    observer.connect(_data->registry, entt::collector.group<tag::InHand, blanks::Sprite>());
 }
 
 sf::Vector2f real_size(const sf::Sprite& sprite){
@@ -47,7 +46,7 @@ sf::Vector2f real_size(const sf::Sprite& sprite){
 
 void HandSystem::set_in_hand_positions() {
 
-    auto view = _data->registry.view<const InHand, sf::Sprite>();
+    auto view = _data->registry.view<const tag::InHand, sf::Sprite>();
     
     int size_hint = view.size_hint();
     float placement = 0;
