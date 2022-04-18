@@ -78,6 +78,7 @@
         "set": "cpp",
         "__availability": "cpp",
         "numeric": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "__functional_03": "cpp"
     }
 }

@@ -24,6 +24,6 @@ class Game{
 public:
     Game(int w, int h, std::string title);
     void loop();
-    void update_systems(float dt);
+    void update_misc(float dt);
 
 };

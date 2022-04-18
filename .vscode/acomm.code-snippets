@@ -24,10 +24,16 @@
 		},
 
 
-		"System": {
+		"new_system": {
 			"prefix": [".system"],
 			"body": ["#pragma once\n#include \"game_data.h\"\n#include \"components.h\"\n\nclass ${1:name}\n{\npublic:\n    ${1:name}(GameDataRef data) : _data(data){init();};\n    void update(float dt);\nprotected:\n    GameDataRef _data;\n    void init();\n};\n"],
 			"description": "system template."
+		},
+
+		"push_delegate":{
+			"prefix": [".push delegate"],
+			"body": ["update_delegate delegate{};\ndelegate.connect<&${1:name}::update>(this);\n_data->delegates.push_back(delegate);"],
+			"description": "push delegate"
 		}
 	}
 	  

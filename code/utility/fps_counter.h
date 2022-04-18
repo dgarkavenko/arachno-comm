@@ -1,13 +1,15 @@
 #pragma once
+#include "game_data.h"
+#include "components.h"
 
-#include "base_system.h"
-
-class FPSCounter : public BaseSystem{
+class FPSCounter
+{
 public:
-    FPSCounter(GameDataRef data) : BaseSystem::BaseSystem(data){on_init();};
-    void update(float dt) override;
+    FPSCounter(GameDataRef data) : _data(data){init();};
+    void update(float dt);
 protected:
-    void on_init() override;
+    GameDataRef _data;
+    void init();
 };
 
 struct FPSCounterComponent{

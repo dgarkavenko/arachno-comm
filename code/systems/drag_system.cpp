@@ -1,9 +1,6 @@
 #include "drag_system.h"
 #include <SFML/Window.hpp>
-#include <random>
-
-std::random_device rd;     // only used once to initialise (seed) engine
-std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
+#include <fmt/core.h>
 
 
 sf::Vector2f last_position;
@@ -11,13 +8,26 @@ sf::Vector2f last_position;
 void DragSystem::update(float dt) {
     
     const sf::Vector2f localPosition = (sf::Vector2f) sf::Mouse::getPosition(_data->window); // window is a sf::Window
-    const sf::Vector2f delta = localPosition - last_position;
+    const sf::Vector2f md = localPosition - last_position;
 
     hover(localPosition);
-    drag(delta);
-    inertia(delta);
+    drag(md);
     
     last_position = localPosition;
+}
+
+
+bool contains(const sf::Sprite sprite, const sf::Vector2f mouse_position){
+            auto mouse_local = sprite.getTransform().getInverse().transformPoint(mouse_position);
+
+        if (mouse_local.x > 0 &&
+            mouse_local.y > 0 &&
+            mouse_local.x < sprite.getLocalBounds().width &&
+            mouse_local.y < sprite.getLocalBounds().height){
+            return true;
+        }
+
+        return false;
 }
 
 void DragSystem::hover(sf::Vector2f mouse_position) {
@@ -25,17 +35,22 @@ void DragSystem::hover(sf::Vector2f mouse_position) {
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
         return;
 
-    _data->registry.clear<tag::Hover>();
-
-    auto view = _data->registry.view<sf::Sprite>();
+    auto view = _data->registry.view<sf::Sprite, tag::Selectable>();
     entt::entity tag = entt::null;
 
     for (entt::entity entity : view)
     {
         auto &sprite = view.get<sf::Sprite>(entity);
-        if (sprite.getGlobalBounds().contains(mouse_position))
-            tag = entity;
+        if(!contains(sprite, mouse_position))
+            continue;
+            
+        if(_data->registry.all_of<tag::Hover>(entity))
+            return;
+        
+        tag = entity;
     }
+
+    _data->registry.clear<tag::Hover>();
 
     if (tag != entt::null)
         _data->registry.emplace<tag::Hover>(tag);
@@ -44,14 +59,22 @@ void DragSystem::hover(sf::Vector2f mouse_position) {
 void DragSystem::drag(sf::Vector2f delta) {
 
     if(!sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        _data->registry.clear<tag::Drag>();
         return;
+    }
+
+    auto hover_only = _data->registry.view<tag::Hover>(entt::exclude<Inertia>);
+    for (auto entity : hover_only)
+        _data->registry.emplace_or_replace<Inertia>(entity);
 
     auto view = _data->registry.view<tag::Hover, sf::Sprite>();
     for (auto entity : view)
     {
         auto &sprite = view.get<sf::Sprite>(entity);
         auto new_position = sprite.getPosition() + delta;
-        sprite.setPosition(new_position);
+        sprite.setPosition(new_position);      
+          
         _data->registry.remove<TweenComponent>(entity);
         _data->registry.emplace_or_replace<tag::Drag>(entity);
     }
@@ -69,23 +92,14 @@ void DragSystem::inertia(sf::Vector2f delta) {
         if(delta.length() > 1){
 
             int ln = delta.length() * 2;
-
-            std::uniform_int_distribution<int> uni(-ln,ln); // guaranteed unbiased
-            auto random_integer = uni(rng);
-
-            auto &tween = _data->registry.emplace_or_replace<TweenComponent>(entity);
-            tween.target = sprite.getPosition() + delta * 8.0f;
-            tween.duration = delta.length() * 0.07f;
-            tween.rotation = sprite.getRotation() + sf::degrees(random_integer);
-            tween.mode = 1;
-            tween.time = 0;
         }
 
         _data->registry.erase<tag::Drag>(entity);
-
     }
 }
 
 void DragSystem::init() {
-    
+    update_delegate delegate{};
+    delegate.connect<&DragSystem::update>(this);
+    _data->delegates.push_back(delegate);
 }

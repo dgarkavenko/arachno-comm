@@ -1,12 +1,15 @@
 #pragma once
-#include "base_system.h"
+#include "game_data.h"
+#include "components.h"
 
-class TweenSystem : public BaseSystem{
+class TweenSystem
+{
 public:
-    TweenSystem(GameDataRef data) : BaseSystem::BaseSystem(data){on_init();};
-    void update(float dt) override;
+    TweenSystem(GameDataRef data) : _data(data){init();};
+    void update(float dt);
 protected:
-    void on_init() override;
-
+    GameDataRef _data;
+    void init();
+    void tween(float dt);
+    void inertia(float dt);
 };
-

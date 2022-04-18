@@ -1,15 +1,37 @@
 #include "craftsman_system.h"
 
 
-void CraftsmanSystem::init() {
-    _data->registry.on_construct<blanks::Text>().connect<&CraftsmanSystem::text_construct>(this);
-    _data->registry.on_construct<blanks::Sprite>().connect<&CraftsmanSystem::on_template_consturct>(this);
+void ConstructorSystem::init() {
+
+    update_delegate delegate{};
+    delegate.connect<&ConstructorSystem::update>(this);
+    _data->delegates.push_back(delegate);
+    
+    //_data->registry.on_construct<blanks::Text>().connect<&CraftsmanSystem::text_construct>(this);
+    //_data->registry.on_construct<blanks::Sprite>().connect<&CraftsmanSystem::sprite_construct>(this);
 }
 
-void CraftsmanSystem::text_construct(entt::registry &registry, entt::entity entity)
+void ConstructorSystem::update(float dt){
+
+    {
+        auto view = _data->registry.view<blanks::Text>();
+        for (auto entity : view)
+            text_construct(_data->registry, entity);
+    }
+
+    {
+        auto view = _data->registry.view<blanks::Sprite>();
+        for (auto entity : view)
+            sprite_construct(_data->registry, entity);
+    }
+
+    _data->registry.clear<blanks::Text>();
+    _data->registry.clear<blanks::Sprite>();
+}
+
+void ConstructorSystem::text_construct(entt::registry &registry, entt::entity entity)
 {
     blanks::Text &blank = registry.get<blanks::Text>(entity);
-
     sf::Text *text = &registry.emplace_or_replace<sf::Text>(entity);
 
     text->setFont(*get_font(blank.font));
@@ -19,22 +41,26 @@ void CraftsmanSystem::text_construct(entt::registry &registry, entt::entity enti
 
     if(blank.bind_ptr != nullptr)
         *blank.bind_ptr = text;
-
 }
 
 
-void CraftsmanSystem::on_template_consturct(entt::registry &registry, entt::entity entity)
+void ConstructorSystem::sprite_construct(entt::registry &registry, entt::entity entity)
 {
     blanks::Sprite& blank = registry.get<blanks::Sprite>(entity);
     auto& sprite = registry.emplace<sf::Sprite>(entity);
     sprite.setTexture(*get_texture(blank.texture_path));
     sprite.setScale(blank.scale);
-    const auto& bounds = sprite.getLocalBounds();
-    sprite.setOrigin({bounds.width / 2.0f, bounds.height / 2.0f});
-    registry.emplace<tag::InHand>(entity);
+
+    if(blank.origin.lengthSq() > 0){
+        const auto& bounds = sprite.getLocalBounds();
+        sprite.setOrigin({bounds.width * blank.origin.x, bounds.height * blank.origin.y});
+    }
+
+    if(blank.on_create)
+        blank.on_create(sprite);
 }
 
-sf::Font *CraftsmanSystem::get_font(std::string path)
+sf::Font *ConstructorSystem::get_font(std::string path)
 {
     if (!fonts.count(path))
     {
@@ -53,7 +79,7 @@ sf::Font *CraftsmanSystem::get_font(std::string path)
     return fonts[path];
 }
 
-sf::Texture* CraftsmanSystem::get_texture(std::string name) {
+sf::Texture* ConstructorSystem::get_texture(std::string name) {
     if( !textures.count(name)){
          auto texture = new sf::Texture();
         if(texture->loadFromFile(name)){

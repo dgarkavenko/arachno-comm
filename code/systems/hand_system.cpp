@@ -3,9 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include <math.h>
 #include "components.h"
+#include "math_functions.h"
 
 
-static float overlap = .4f;
+static float overlap = .05f;
 static float radius = 180;
 static float vertical_offset = 500;
 static float length = 2.f;
@@ -27,16 +28,21 @@ sf::Angle get_arc_rotation(const sf::Vector2f& target){
     return dir.normalized().angle();
 }
 
+void HandSystem::init() {
+
+    update_delegate delegate{};
+    delegate.connect<&HandSystem::update>(this);
+    _data->delegates.push_back(delegate);
+
+    observer.connect(_data->registry, entt::collector.group<tag::InHand>());
+}
+
 void HandSystem::update(float dt) {
     for (auto entity : observer){
         set_in_hand_positions();
         break;
     }
     observer.clear();
-}
-
-void HandSystem::on_init() {
-    observer.connect(_data->registry, entt::collector.group<tag::InHand, blanks::Sprite>());
 }
 
 sf::Vector2f real_size(const sf::Sprite& sprite){
@@ -55,7 +61,7 @@ void HandSystem::set_in_hand_positions() {
     for (auto entity : view) {
         auto& sprite = _data->registry.get<sf::Sprite>(entity);
         sf::Vector2f size = real_size(sprite);
-        const float card_visible_size = (1 - overlap) * size.x;
+        const float card_visible_size = (1 - size_hint * overlap) * size.x;
         const float start_x = RENDER_WIDTH / 2.f - card_visible_size * ((size_hint - 1) / 2.f);
         float x = start_x + i * card_visible_size;
 
@@ -65,7 +71,8 @@ void HandSystem::set_in_hand_positions() {
         tween.duration = 3;
         tween.time = 0;
         tween.target = {x, get_arc_y(x)};
-        tween.rotation = get_arc_rotation(sprite.getPosition()) +  sf::degrees(90);
+        tween.rotation = get_arc_rotation(tween.target) +  sf::degrees(90);
+        tween.tween_function = &smoothstep;
         i++;
     };
 }

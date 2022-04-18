@@ -5,6 +5,18 @@
 #include <fmt/core.h>
 #include "components.h"
 
+
+void FPSCounter::init()
+{
+    update_delegate delegate{};
+    delegate.connect<&FPSCounter::update>(this);
+    _data->delegates.push_back(delegate);
+
+    entt::entity fps_counter = _data->registry.create();
+    _data->registry.emplace<FPSCounterComponent>(fps_counter);
+    _data->registry.emplace_or_replace<blanks::Text>(fps_counter, "", "PT_Sans/PTSans-Regular.ttf", 20, sf::Color::Red);
+}
+
 void FPSCounter::update(float dt)
 {
     auto &reg = _data->registry;
@@ -22,12 +34,4 @@ void FPSCounter::update(float dt)
             text.setString(fmt::format("fps: {:.1f}", 1.0f / sum * fps.measure_size));
         }
     }
-}
-
-void FPSCounter::on_init()
-{
-    entt::entity fps_counter = _data->registry.create();
-    _data->registry.emplace<FPSCounterComponent>(fps_counter);
-    _data->registry.emplace_or_replace<blanks::Text>(fps_counter, "", "PT_Sans/PTSans-Regular.ttf", 20, sf::Color::Red);
-
 }

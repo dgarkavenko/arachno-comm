@@ -4,9 +4,10 @@
 #include "components.h"
 #include <map>
 
-class CraftsmanSystem{
+class ConstructorSystem{
 public: 
-    CraftsmanSystem(GameDataRef data) : _data(data){init();};
+    ConstructorSystem(GameDataRef data) : _data(data){init();};
+    void update(float dt);
   
 protected:
     GameDataRef _data;
@@ -19,5 +20,5 @@ protected:
     sf::Texture* get_texture(std::string name);
 
     void text_construct(entt::registry &registry, entt::entity entity);
-    void on_template_consturct(entt::registry &registry, entt::entity entity);
+    void sprite_construct(entt::registry &registry, entt::entity entity);
 };
