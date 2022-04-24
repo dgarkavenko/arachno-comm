@@ -3,12 +3,9 @@
 
 void ConstructorSystem::init() {
 
-    update_delegate delegate{};
-    delegate.connect<&ConstructorSystem::update>(this);
-    _data->delegates.push_back(delegate);
-    
+    _data->delegates.push_back({entt::connect_arg<&ConstructorSystem::update>, this});
     //_data->registry.on_construct<blanks::Text>().connect<&CraftsmanSystem::text_construct>(this);
-    //_data->registry.on_construct<blanks::Sprite>().connect<&CraftsmanSystem::sprite_construct>(this);
+    _data->registry.on_construct<blanks::Sprite>().connect<&ConstructorSystem::sprite_construct>(this);
 }
 
 void ConstructorSystem::update(float dt){
@@ -19,11 +16,11 @@ void ConstructorSystem::update(float dt){
             text_construct(_data->registry, entity);
     }
 
-    {
-        auto view = _data->registry.view<blanks::Sprite>();
-        for (auto entity : view)
-            sprite_construct(_data->registry, entity);
-    }
+    // {
+    //     auto view = _data->registry.view<blanks::Sprite>();
+    //     for (auto entity : view)
+    //         sprite_construct(_data->registry, entity);
+    // }
 
     _data->registry.clear<blanks::Text>();
     _data->registry.clear<blanks::Sprite>();

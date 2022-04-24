@@ -6,7 +6,8 @@
 
 using namespace sf;
 
-typedef sf::Vector2f (*TweenFunction)(sf::Vector2f from, sf::Vector2f to, float t);
+typedef Vector2f (*TweenFunction)(Vector2f from, Vector2f to, float t);
+typedef float (*LerpFunction)(float from, float to, float t);
 
 inline float lerp(float a, float b, float f)
 {
@@ -19,7 +20,6 @@ inline float smoothstep(float from, float to, float t)
     t = (float)(-2.0 * (double)t * (double)t * (double)t + 3 * (double)t * (double)t);
     return (float)((double)to * (double)t + (double)from * (1.0 - (double)t));
 }
-
 
 inline Vector2f smoothstep(Vector2f from, Vector2f to, float t)
 {

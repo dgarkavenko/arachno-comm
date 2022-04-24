@@ -32,7 +32,7 @@
 
 		"push_delegate":{
 			"prefix": [".push delegate"],
-			"body": ["update_delegate delegate{};\ndelegate.connect<&${1:name}::update>(this);\n_data->delegates.push_back(delegate);"],
+			"body": ["_data->delegates.push_back({entt::connect_arg<&${1:system}::update>, this});"],
 			"description": "push delegate"
 		}
 	}

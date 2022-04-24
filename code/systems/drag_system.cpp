@@ -5,12 +5,25 @@
 
 sf::Vector2f last_position;
 
+
+void DragSystem::init() {
+    _data->delegates.push_back({entt::connect_arg<&DragSystem::update>, this});
+}
+
+
 void DragSystem::update(float dt) {
     
     const sf::Vector2f localPosition = (sf::Vector2f) sf::Mouse::getPosition(_data->window); // window is a sf::Window
     const sf::Vector2f md = localPosition - last_position;
 
     hover(localPosition);
+
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
+        auto view = _data->registry.view<tag::Hover, Card>();
+        for (auto entity : view)
+            view.get<Card>(entity).is_revealed = true;
+    }
+
     drag(md);
     
     last_position = localPosition;
@@ -96,10 +109,4 @@ void DragSystem::inertia(sf::Vector2f delta) {
 
         _data->registry.erase<tag::Drag>(entity);
     }
-}
-
-void DragSystem::init() {
-    update_delegate delegate{};
-    delegate.connect<&DragSystem::update>(this);
-    _data->delegates.push_back(delegate);
 }

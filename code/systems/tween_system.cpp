@@ -66,12 +66,9 @@ void TweenSystem::tween(float dt)
         sprite.setPosition(tween.tween_function(sprite.getPosition(), tween.target, t));
 
         auto delta = (tween.rotation - sprite.getRotation()).wrapSigned();
-        sprite.rotate(delta * (true ? smoothstep(0.0f, 1.0f, t) : easeOutQuint(0.0f, 1.0f, t)));
+        sprite.rotate(delta * tween.rotation_function(0.0f, 1.0f, t));
 
         if (tween.time > tween.duration)
-        {
             _data->registry.erase<TweenComponent>(entity);
-            continue;
-        }
     }
 }

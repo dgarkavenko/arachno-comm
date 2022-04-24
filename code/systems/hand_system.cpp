@@ -30,10 +30,7 @@ sf::Angle get_arc_rotation(const sf::Vector2f& target){
 
 void HandSystem::init() {
 
-    update_delegate delegate{};
-    delegate.connect<&HandSystem::update>(this);
-    _data->delegates.push_back(delegate);
-
+    _data->delegates.push_back({entt::connect_arg<&HandSystem::update>, this});
     observer.connect(_data->registry, entt::collector.group<tag::InHand>());
 }
 

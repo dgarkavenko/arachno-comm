@@ -8,9 +8,7 @@
 
 void FPSCounter::init()
 {
-    update_delegate delegate{};
-    delegate.connect<&FPSCounter::update>(this);
-    _data->delegates.push_back(delegate);
+    _data->delegates.push_back({entt::connect_arg<&FPSCounter::update>, this});
 
     entt::entity fps_counter = _data->registry.create();
     _data->registry.emplace<FPSCounterComponent>(fps_counter);

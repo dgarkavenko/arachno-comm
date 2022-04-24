@@ -36,7 +36,7 @@ struct Inertia{
     sf::Vector2f velocity;
     sf::Vector2f acceleration;
     sf::Vector2f previous_position;
-    float drag = 0.048f;
+    float drag = 0.1f;
 };
 
 struct TweenComponent{
@@ -45,5 +45,17 @@ struct TweenComponent{
     float duration = 1;
     float time = 0;
     float delay = 0;
-    TweenFunction tween_function;
+    TweenFunction tween_function {&easeOutQuint};
+    LerpFunction rotation_function {&easeOutQuint};
+};
+
+struct Card{
+
+    sf::Sprite* back;
+    sf::Sprite* face;
+
+    bool is_revealed;
+
+    inline sf::Sprite *up() { return is_revealed ? face : back;};
+    inline sf::Sprite *bottom() { return is_revealed ? back : face;};
 };
